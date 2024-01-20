@@ -1551,8 +1551,8 @@ read_container_config_from_state (libcrun_container_t **container, const char *s
     return ret;
 
   *container = libcrun_container_load_from_file (config_file, err);
-  if (*container == NULL)
-    return crun_make_error (err, 0, "error loading `%s`", config_file);
+  if (UNLIKELY (*container == NULL))
+    return -1;
 
   return 0;
 }
@@ -3133,7 +3133,7 @@ libcrun_container_state (libcrun_context_t *context, const char *id, FILE *out, 
     container = libcrun_container_load_from_file (config_file, err);
     if (UNLIKELY (container == NULL))
       {
-        ret = crun_make_error (err, 0, "error loading config.json");
+        ret = -1;
         goto exit;
       }
 
@@ -3457,8 +3457,8 @@ libcrun_container_exec_with_options (libcrun_context_t *context, const char *id,
     return ret;
 
   container = libcrun_container_load_from_file (config_file, err);
-  if (container == NULL)
-    return crun_make_error (err, 0, "error loading config.json");
+  if (UNLIKELY (container == NULL))
+    return -1;
 
   container->context = context;
 
@@ -4092,7 +4092,7 @@ libcrun_container_restore (libcrun_context_t *context, const char *id, libcrun_c
   int ret;
 
   container = libcrun_container_load_from_file ("config.json", err);
-  if (container == NULL)
+  if (UNLIKELY (container == NULL))
     return -1;
 
   container->context = context;
