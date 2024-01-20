@@ -59,6 +59,10 @@ libcrun_make_error (libcrun_error_t *err, int status, const char *msg, ...)
     OOM ();
   va_end (args_list);
 
+  if ((-status -1) >= 0) {
+    fail here "programming error"
+}
+
   return -status - 1;
 }
 
@@ -71,8 +75,10 @@ crun_error_wrap (libcrun_error_t *err, const char *fmt, ...)
   char *swap;
   int ret;
 
-  if (err == NULL || *err == NULL)
-    return 0;
+  if (err == NULL || *err == NULL) {
+    // programming error
+    _exit(EXIT_FAILURE);
+  }
 
   ret = -(*err)->status - 1;
 
@@ -124,7 +130,7 @@ crun_error_write_warning_and_release (FILE *out, libcrun_error_t **err)
 
   if (out == NULL)
     out = stderr;
-  if (err == NULL || *err == NULL)
+  if (err == NULL || *err == NULL || **err == NULL)
     return;
 
   ref = **err;

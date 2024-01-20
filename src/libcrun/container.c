@@ -2509,6 +2509,8 @@ libcrun_container_run_internal (libcrun_container_t *container, libcrun_context_
     {
       ret = do_hooks (def, pid, context->id, false, NULL, "created", (hook **) def->hooks->prestart,
                       def->hooks->prestart_len, hooks_out_fd, hooks_err_fd, err);
+      // TODO: check this:
+      // if the hook returns a positive value, is there any created errror in "err"?
       if (UNLIKELY (ret != 0))
         goto fail;
     }
@@ -2561,8 +2563,10 @@ libcrun_container_run_internal (libcrun_container_t *container, libcrun_context_
     goto fail;
 
   ret = close_and_reset (&sync_socket);
-  if (UNLIKELY (ret < 0))
+  if (UNLIKELY (ret < 0)) {
+    crun_make_error (err, 0, "close/reset of sync_socket failed");
     goto fail;
+  }
 
   ret = write_container_status (container, context, pid, cgroup_status, err);
   if (UNLIKELY (ret < 0))
@@ -2586,8 +2590,10 @@ libcrun_container_run_internal (libcrun_container_t *container, libcrun_context_
         goto fail;
 
       ret = close_and_reset (&own_seccomp_receiver_fd);
-      if (UNLIKELY (ret < 0))
+      if (UNLIKELY (ret < 0)) {
+	crun_make_error (err, 0, "close/reset of seccomp receiver fd failed");
         goto fail;
+      }
     }
 
   {
