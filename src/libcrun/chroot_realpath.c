@@ -47,6 +47,7 @@
 
 #define MAX_READLINKS 32
 
+// The caller is responsible for passing a buffer of size PATH_MAX or larger as resolved_path.
 char *chroot_realpath(const char *chroot, const char *path, char resolved_path[])
 {
 	char copy_path[PATH_MAX];
@@ -63,6 +64,10 @@ char *chroot_realpath(const char *chroot, const char *path, char resolved_path[]
 	/* Trivial case. */
 	if (chroot == NULL || *chroot == '\0' ||
 	    (*chroot == '/' && chroot[1] == '\0')) {
+		if (strlen(path) >= PATH_MAX) {
+			__set_errno(ENAMETOOLONG);
+			return NULL;
+		}
 		strcpy(resolved_path, path);
 		return resolved_path;
 	}
