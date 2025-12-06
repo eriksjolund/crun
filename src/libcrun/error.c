@@ -58,6 +58,9 @@ libcrun_make_error (libcrun_error_t *err, int status, const char *msg, ...)
     OOM ();
   va_end (args_list);
 
+  if ((-status -1) >= 0)
+     libcrun_fail_with_error (0, "internal error: invalid status");
+
   return -status - 1;
 }
 

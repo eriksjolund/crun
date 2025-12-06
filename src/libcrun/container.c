@@ -2908,6 +2908,8 @@ libcrun_container_run_internal (libcrun_container_t *container, libcrun_context_
       libcrun_debug ("Running `prestart` hooks");
       ret = do_hooks (def, pid, context->id, false, NULL, "created", (hook **) def->hooks->prestart,
                       def->hooks->prestart_len, hooks_out_fd, hooks_err_fd, err);
+      // TODO: check this:
+      // if the hook returns a positive value, is there any created errror in "err"?
       if (UNLIKELY (ret != 0))
         goto fail;
     }
