@@ -127,7 +127,5 @@ crun_command_spec (struct crun_global_arguments *global_args, int argc, char **a
   if (f == NULL)
     return libcrun_make_error (err, errno, "cannot open `%s`", where);
 
-  ret = libcrun_container_spec (! spec_options.rootless, f, err);
-
-  return ret >= 0 ? 0 : ret;
+  return libcrun_container_spec (! spec_options.rootless, f, err);
 }
