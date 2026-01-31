@@ -4758,7 +4758,11 @@ init_container (libcrun_container_t *container, int sync_socket_container, struc
           /* Report the new PID to the parent and exit immediately.  */
           ret = send_success_to_sync_socket (sync_socket_container, err);
           if (UNLIKELY (ret < 0))
-            kill (new_pid, SIGKILL);
+            {
+              kill (new_pid, SIGKILL);
+              crun_error_release (err);
+              _safe_exit (0);
+            }
 
           ret = TEMP_FAILURE_RETRY (write (sync_socket_container, &new_pid, sizeof (new_pid)));
           if (UNLIKELY (ret < 0))
