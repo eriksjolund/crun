@@ -1447,7 +1447,6 @@ set_home_env (uid_t id)
   cleanup_free char *buf = NULL;
   long buf_size;
   cleanup_file FILE *stream = NULL;
-  int ret = -1;
 
   buf_size = sysconf (_SC_GETPW_R_SIZE_MAX);
   if (buf_size < 0)
@@ -1461,14 +1460,20 @@ set_home_env (uid_t id)
 
   for (;;)
     {
-      struct passwd *ret_pw = NULL;
+      struct passwd *ret_pw;
 
-      ret = fgetpwent_r (stream, &pwd, buf, buf_size, &ret_pw);
+      int ret = fgetpwent_r (stream, &pwd, buf, buf_size, &ret_pw) != 0);
       if (UNLIKELY (ret != 0))
         {
-          if (errno != ERANGE)
-            goto error;
+          errno = ret;
+          if (errno == EINTR)
+            continue;
 
+          if (errno != ERANGE)
+	    {
+              /* Let callers handle the error if the user was not found. */
+              goto error;
+	    }
           buf_size *= 2;
           buf = xrealloc (buf, buf_size);
           continue;
@@ -1476,14 +1481,15 @@ set_home_env (uid_t id)
 
       if (ret_pw && ret_pw->pw_uid == id)
         {
-          setenv ("HOME", ret_pw->pw_dir, 1);
+          if (UNLIKELY (setenv ("HOME", ret_pw->pw_dir, 1) < 0))
+            goto error;
+
           return 0;
         }
     }
 
 error:
-  /* Let callers handle the error if the user was not found. */
-  return ret ? -errno : 0;
+  return -errno;
 }
 
 /*if subuid or subgid exist, take the first range for the user */
