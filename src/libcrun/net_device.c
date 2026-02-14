@@ -484,7 +484,11 @@ move_network_device (const char *ifname, const char *newifname, int netns_fd, li
     return crun_make_error (err, errno, "waitpid for exec child pid");
 
   if (wait_status != 0)
-    return -get_process_exit_status (wait_status);
+    {
+      /* Since vfork() is used, the child process shares the parent's memory.
+       * This allows the parent to reuse the error created by the child.  */
+      return -get_process_exit_status (wait_status);
+    }
 
   return 0;
 }

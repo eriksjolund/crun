@@ -6216,6 +6216,8 @@ run_in_container_namespace (libcrun_container_status_t *status, int (*callback) 
   if (UNLIKELY (ret < 0))
     return crun_make_error (err, errno, "waitpid for exec child pid");
 
+  /* Since vfork() is used, the child process shares the parent's memory.
+   * This allows the parent to reuse the error created by the child.  */
   return get_process_exit_status (wait_status);
 }
 
