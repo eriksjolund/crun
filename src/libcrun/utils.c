@@ -2243,7 +2243,7 @@ copy_recursive_fd_to_fd (int srcdirfd, int dfd, const char *srcname, const char 
   if (UNLIKELY (dsrcfd == NULL))
     {
       TEMP_FAILURE_RETRY (close (srcdirfd));
-      return crun_make_error (err, errno, "open directory `%s`", destname);
+      return crun_make_error (err, errno, "open directory `%s`", srcname);
     }
 
   for (de = readdir (dsrcfd); de; de = readdir (dsrcfd))
