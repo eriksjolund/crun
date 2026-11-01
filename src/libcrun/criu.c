@@ -1302,7 +1302,15 @@ libcrun_container_restore_linux_criu (libcrun_container_status_t *status, libcru
               {
                 const char *str = json_object_get_string (s);
                 if (has_prefix (str, "pipe:"))
-                  libcriu_wrapper->criu_add_inherit_fd (i, str);
+                  {
+                    ret = libcriu_wrapper->criu_add_inherit_fd (i, str);
+                    if (UNLIKELY (ret < 0))
+                      {
+                        ret = crun_make_error (err, -ret, "CRIU: failed adding inherit fd `%s`", str);
+                        json_object_put (doc);
+                        return ret;
+                      }
+                  }
               }
           }
       }
