@@ -1605,8 +1605,9 @@ run_process (char **args, libcrun_error_t *err)
       r = TEMP_FAILURE_RETRY (waitpid (pid, &status, 0));
       if (r < 0)
         return crun_make_error (err, errno, "waitpid");
-      if (WIFEXITED (status) || WIFSIGNALED (status))
-        return WEXITSTATUS (status);
+      if (WIFSIGNALED (status))
+        return crun_make_error (err, 0, "`%s` killed by signal %d", args[0], WTERMSIG (status));
+      return WEXITSTATUS (status);
     }
 
   execvp (args[0], args);
