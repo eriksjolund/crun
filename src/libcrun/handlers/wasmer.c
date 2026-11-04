@@ -135,9 +135,9 @@ libwasmer_exec (void *cookie, libcrun_container_t *container arg_unused,
   if (wat2wasm == NULL || wasm_module_delete == NULL || wasm_instance_delete == NULL
       || wasm_engine_delete == NULL || wasm_store_delete == NULL || wasm_func_call == NULL
       || wasm_extern_as_func == NULL || wasm_instance_exports == NULL || wasm_instance_new == NULL
-      || wasm_store_new == NULL || wasm_engine_new == NULL || wasm_byte_vec_new == NULL
+      || wasm_store_new == NULL || wasm_module_new == NULL || wasm_engine_new == NULL || wasm_byte_vec_new == NULL
       || wasm_byte_vec_delete == NULL || wasm_extern_vec_delete == NULL
-      || wasm_byte_vec_new_uninitialized == NULL || wasi_config_new == NULL
+      || wasm_byte_vec_new_uninitialized == NULL || wasi_config_new == NULL || wasi_config_arg == NULL
       || wasi_config_capture_stdout == NULL || wasi_env_new == NULL || wasm_module_imports == NULL
       || wasi_env_read_stdout == NULL || wasi_env_delete == NULL || wasm_func_delete == NULL
       || wasm_importtype_vec_delete == NULL || wasm_extern_vec_new_uninitialized == NULL
