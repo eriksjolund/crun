@@ -5662,7 +5662,7 @@ libcrun_container_add_or_remove_mounts_from_file (libcrun_context_t *context, co
   const char *state_root = context->state_root;
   cleanup_free parser_error parser_err = NULL;
   struct parser_context pctx = { 0, stderr };
-  libcrun_container_status_t status = {};
+  cleanup_container_status libcrun_container_status_t status = {};
   cleanup_free char *content = NULL;
   json_object *doc = NULL;
   size_t n_mounts = 0, len, i;
